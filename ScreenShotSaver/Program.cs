@@ -4,6 +4,8 @@ using NLog;
 using LogLevel = NLog.LogLevel;
 using Starcounter;
 using ScreenshotSaver.Handlers;
+using ScreenShotSaver;
+using System.IO;
 
 namespace ScreenshotSaver
 {
@@ -21,9 +23,12 @@ namespace ScreenshotSaver
             LogManager.Configuration = nLogconfig;
 
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArguments(new List<string>() { "headless" });
-            var chromeDriverService = ChromeDriverService.CreateDefaultService(@"C:\Users\Lena\source\ScreenShotSaver\ScreenShotSaver");
+            chromeOptions.AddArguments(new List<string>() { "headless", "--window-size=1920,1080" });
+            var chromeDriverService = ChromeDriverService.CreateDefaultService(Directory.GetCurrentDirectory());
             browser = new ChromeDriver(chromeDriverService, chromeOptions);
+            browser.Manage().Window.Maximize();
+
+            var screenshotHandler = new ScreenshotHandler(new ScreenshotMaker());
 
             Handle.POST<Request>(API_BASE_V1 + "screenshotfromurl", (req) => ScreenshotHandler.PostScreenShotsAsync(req), DefaultOption);
             Handle.GET<Request, string>(API_BASE_V1 + "screenshot/{?}", (req, id) => ScreenshotHandler.GetScreenShotById(req, id), DefaultOption);

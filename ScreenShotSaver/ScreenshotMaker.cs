@@ -12,7 +12,6 @@ namespace ScreenShotSaver
         public string MakeAndSaveScreenShot(string url)
         {
             var verifiedUrl = GetVerifiedUrl(url);
-
             Program.browser.Navigate().GoToUrl(verifiedUrl);
 
             var filepath = GenerateFileFullPath();
@@ -48,7 +47,7 @@ namespace ScreenShotSaver
 
         private static string GenerateFileFullPath()
         {
-            return string.Format("{0}/{1:N}.{1}", Directory.GetCurrentDirectory(), Guid.NewGuid(), "png");
+            return string.Format("{0}/{1:N}.{2}", Directory.GetCurrentDirectory(), Guid.NewGuid(), "png");
         }
     }
 }

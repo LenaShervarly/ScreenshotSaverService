@@ -16,9 +16,9 @@ namespace ScreenshotSaver.Handlers
         private static Logger Logger = LogManager.GetCurrentClassLogger();
         private static IScreenshotMaker ScreenshotMaker;
 
-        public ScreenshotHandler(IScreenshotMaker _screenshotMaker)
+        public ScreenshotHandler(IScreenshotMaker screenshotMaker)
         {
-            ScreenshotMaker = _screenshotMaker;
+            ScreenshotMaker = screenshotMaker;
         }
 
         public static Response PostScreenShotsAsync(Request request)
@@ -30,8 +30,8 @@ namespace ScreenshotSaver.Handlers
             {
                 try
                 {
-                    //IScreenshotMaker.MakeAndSaveScreenShot(url) - runs as a separate process: Windows service. 
-                    // with Rabbit MQ I'll communicate to the Service 
+                    //IScreenshotMaker.MakeAndSaveScreenShot(url) - should run in future as a separate process, for example as a Windows service. 
+                    // with Rabbit MQ it will communicate to the Service 
                     var id = ScreenshotMaker.MakeAndSaveScreenShot(url);
                     fileIds.Add(id);
                 }
@@ -41,7 +41,7 @@ namespace ScreenshotSaver.Handlers
                     var errorResponse = new Response
                     {
                         StatusCode = (ushort)HttpStatusCode.PreconditionFailed,
-                        Body = $"Provided URL ({url}) is not valid. Please check your URL list in the specified file"
+                        Body = $"Failed navigate to URL and save a fil. Probably a provided URL ({url}) is not valid. Please check your URL list in the specified file"
                     };
                     return errorResponse;
                 }
@@ -66,7 +66,7 @@ namespace ScreenshotSaver.Handlers
                 {
                     StatusCode = (ushort)HttpStatusCode.OK,
                     StreamedBody = stream,
-                    ContentType = "image/jpg"
+                    ContentType = "image/png"
                 };
                 return response;
             }
@@ -85,7 +85,7 @@ namespace ScreenshotSaver.Handlers
 
         public static ScreenshotData GetScreenShotById(string id)
         {
-            return Db.SQL<ScreenshotData>($"SELECT x FROM {typeof(ScreenshotData).Name} x WHERE x.{nameof(ScreenshotData.Id)} = ?", id).FirstOrDefault();
+            return Db.SQL<ScreenshotData>($"SELECT x FROM {typeof(ScreenshotData).Name} x WHERE x.{nameof(ScreenshotData.Id)} = ?", ulong.Parse(id)).FirstOrDefault();
         }
 
         public static ScreenshotData GetScreenShotByUrl(string url)
