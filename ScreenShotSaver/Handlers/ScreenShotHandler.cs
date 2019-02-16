@@ -41,7 +41,7 @@ namespace ScreenshotSaver.Handlers
                     var errorResponse = new Response
                     {
                         StatusCode = (ushort)HttpStatusCode.PreconditionFailed,
-                        Body = $"Failed navigate to URL and save a fil. Probably a provided URL ({url}) is not valid. Please check your URL list in the specified file"
+                        Body = $"Failed navigate to URL and save a file. Probably a provided URL ({url}) is not valid. Please check your URL list. We expect to get URLs in the format: \"URLs\" : [ \"www.google.com\"]"
                     };
                     return errorResponse;
                 }
@@ -63,6 +63,7 @@ namespace ScreenshotSaver.Handlers
             {
                 screenshot = GetScreenShotById(idOrUrl);
             }
+
             var screenshotPath = screenshot?.Path;
             if (!string.IsNullOrEmpty(screenshotPath))
             { 
@@ -95,7 +96,7 @@ namespace ScreenshotSaver.Handlers
 
         public static ScreenshotData GetScreenShotByUrl(string url)
         {
-            return Db.SQL<ScreenshotData>($"SELECT x FROM {typeof(ScreenshotData).Name} x WHERE x.{nameof(ScreenshotData.Url)} = ?", url).FirstOrDefault();
+            return Db.SQL<ScreenshotData>($"SELECT x FROM {typeof(ScreenshotData).Name} x WHERE x.{nameof(ScreenshotData.Url)} = ?", url).OrderBy(s => s.Updated).LastOrDefault();
         }
     }
 }
