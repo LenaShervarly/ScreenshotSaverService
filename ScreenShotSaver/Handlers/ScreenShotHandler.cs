@@ -56,11 +56,16 @@ namespace ScreenshotSaver.Handlers
             return response;
         }
 
-        public static Response GetScreenShotById(Request request, string id)
+        public static Response GetScreenShotByIdOrUrl(Request request, string idOrUrl)
         {
-            var screenshotPath = GetScreenShotById(id)?.Path;
-            if (!string.IsNullOrEmpty(screenshotPath))
+            var screenshot = GetScreenShotByUrl(idOrUrl);  
+            if (screenshot == null)
             {
+                screenshot = GetScreenShotById(idOrUrl);
+            }
+            var screenshotPath = screenshot?.Path;
+            if (!string.IsNullOrEmpty(screenshotPath))
+            { 
                 var stream = File.OpenRead(screenshotPath);
                 var response = new Response
                 {
@@ -72,7 +77,7 @@ namespace ScreenshotSaver.Handlers
             }
             else
             {
-                var responseMessage = $"For the provided id: {id}, The filepath was empty of doesn't exist: {screenshotPath}";
+                var responseMessage = $"For the provided id or Url: {idOrUrl}, The filepath was empty of doesn't exist: {screenshotPath}";
                 Logger.Error(responseMessage);
                 var errorResponse = new Response
                 {

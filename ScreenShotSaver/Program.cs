@@ -31,7 +31,7 @@ namespace ScreenshotSaver
             var screenshotHandler = new ScreenshotHandler(new ScreenshotMaker());
 
             Handle.POST<Request>(API_BASE_V1 + "screenshotfromurl", (req) => ScreenshotHandler.PostScreenShotsAsync(req), DefaultOption);
-            Handle.GET<Request, string>(API_BASE_V1 + "screenshot/{?}", (req, id) => ScreenshotHandler.GetScreenShotById(req, id), DefaultOption);
+            Handle.GET<Request, string>(API_BASE_V1 + "screenshot/{?}", (req, id) => ScreenshotHandler.GetScreenShotByIdOrUrl(req, id), DefaultOption);
         }
     }
 }
