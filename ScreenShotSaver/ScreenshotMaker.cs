@@ -38,7 +38,11 @@ namespace ScreenShotSaver
         private static string GetVerifiedUrl(string url)
         {
             url = url.Trim();
-            if (!url.StartsWith("http"))
+
+            bool isUrlValid = Uri.TryCreate(url, UriKind.Absolute, out  Uri validUrl)
+                && (validUrl.Scheme == Uri.UriSchemeHttp || validUrl.Scheme == Uri.UriSchemeHttps);
+
+            if(!isUrlValid)
             {
                 return $"http://{url}";
             }

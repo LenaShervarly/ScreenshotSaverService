@@ -41,7 +41,9 @@ namespace ScreenshotSaver.Handlers
                     var errorResponse = new Response
                     {
                         StatusCode = (ushort)HttpStatusCode.PreconditionFailed,
-                        Body = $"Failed navigate to URL and save a file. Probably a provided URL ({url}) is not valid. Please check your URL list. We expect to get URLs in the format: \"URLs\" : [ \"www.google.com\"]"
+                        Body = $"Successfully made {fileIds.Count} screenshots. They are saved withs the following ids: {fileIds.ToString()}. " +
+                            $"However there was a filure while processing url: { url}. Provided URL is not valid. " +
+                            $"Please check your URL list. We expect to get URLs in the format: \"URLs\" : [ \"http://www.google.com\"]"
                     };
                     return errorResponse;
                 }
